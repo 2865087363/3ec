@@ -17,16 +17,24 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 补丁步骤必须放在 checkout 之后、编译之前
-      
       - name: Grant execute permission
         run: chmod +x easycontrol/gradlew
 
       - name: Clean project
         run: cd easycontrol && ./gradlew clean
 
+      
+
+      # ---------- 编译 server 模块并放入 raw 目录 ----------
+      - name: Build easycontrol_server
+        run: |
+          cd easycontrol
+          ./gradlew :server:assembleDebug
+          mkdir -p app/src/main/res/raw
+          cp server/build/outputs/apk/debug/server-debug.apk app/src/main/res/raw/easycontrol_server
+
       - name: Build APK
-        run: cd easycontrol && ./gradlew assembleDebug
+        run: cd easycontrol && ./gradlew :app:assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
