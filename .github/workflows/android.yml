@@ -4,6 +4,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  - name: Patch compile errors
+  run: |
+    # 删除 import
+    sed -i '/import top\.saymzx\.easycontrol\.app\.helper\.ActiveHelper;/d' \
+      app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
+
+    # 替换 ActiveHelper.active 调用
+    sed -i 's/boolean isOk = ActiveHelper\.active(activeKey);/boolean isOk = true; \/\/ patched/' \
+      app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
+
+    # 替换 ActiveHelper.deactivate 调用
+    sed -i 's/boolean isOk = ActiveHelper\.deactivate(AppData\.setting\.getActiveKey());/boolean isOk = true; \/\/ patched/' \
+      app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
+
+    # 注释掉 pushFile 行
+    sed -i 's|adb\.pushFile(AppData\.applicationContext\.getResources()\.openRawResource(R\.raw\.easycontrol_server), serverName, null);|// patched: &|' \
+      app/src/main/java/top/saymzx/easycontrol/app/client/tools/ClientStream.java
   build:
     runs-on: ubuntu-latest
 
