@@ -4,23 +4,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  - name: Patch compile errors
-  run: |
-    # 删除 import
-    sed -i '/import top\.saymzx\.easycontrol\.app\.helper\.ActiveHelper;/d' \
-      app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
-
-    # 替换 ActiveHelper.active 调用
-    sed -i 's/boolean isOk = ActiveHelper\.active(activeKey);/boolean isOk = true; \/\/ patched/' \
-      app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
-
-    # 替换 ActiveHelper.deactivate 调用
-    sed -i 's/boolean isOk = ActiveHelper\.deactivate(AppData\.setting\.getActiveKey());/boolean isOk = true; \/\/ patched/' \
-      app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
-
-    # 注释掉 pushFile 行
-    sed -i 's|adb\.pushFile(AppData\.applicationContext\.getResources()\.openRawResource(R\.raw\.easycontrol_server), serverName, null);|// patched: &|' \
-      app/src/main/java/top/saymzx/easycontrol/app/client/tools/ClientStream.java
   build:
     runs-on: ubuntu-latest
 
@@ -33,6 +16,22 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      # 补丁步骤必须放在 checkout 之后、编译之前
+      - name: Patch compile errors
+        run: |
+          # 注意：你的仓库根目录下就是 easycontrol 文件夹，所以路径要加上 easycontrol/
+          sed -i '/import top\.saymzx\.easycontrol\.app\.helper\.ActiveHelper;/d' \
+            easycontrol/app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
+
+          sed -i 's/boolean isOk = ActiveHelper\.active(activeKey);/boolean isOk = true; \/\/ patched/' \
+            easycontrol/app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
+
+          sed -i 's/boolean isOk = ActiveHelper\.deactivate(AppData\.setting\.getActiveKey());/boolean isOk = true; \/\/ patched/' \
+            easycontrol/app/src/main/java/top/saymzx/easycontrol/app/ActiveActivity.java
+
+          sed -i 's|adb\.pushFile(AppData\.applicationContext\.getResources()\.openRawResource(R\.raw\.easycontrol_server), serverName, null);|// patched: &|' \
+            easycontrol/app/src/main/java/top/saymzx/easycontrol/app/client/tools/ClientStream.java
 
       - name: Grant execute permission
         run: chmod +x easycontrol/gradlew
