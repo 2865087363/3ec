@@ -26,7 +26,7 @@ public class ActiveActivity extends Activity {
     activityActiveBinding = ActivityActiveBinding.inflate(this.getLayoutInflater());
     setContentView(activityActiveBinding.getRoot());
     // 取消激活
-    if (AppData.setting.getIsActive()) deactivate();
+    //if (AppData.setting.getIsActive()) deactivate();
     setButtonListener();
     // 绘制UI
     drawUi();
