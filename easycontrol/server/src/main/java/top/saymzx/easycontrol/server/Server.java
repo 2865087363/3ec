@@ -140,7 +140,7 @@ public final class Server {
         VideoEncode.encodeOut();
         frame++;
         if (frame > 120) {
-          if (System.currentTimeMillis() - lastKeepAliveTime > timeoutDelay) throw new IOException("连接断开");
+          //if (System.currentTimeMillis() - lastKeepAliveTime > timeoutDelay) throw new IOException("连接断开");
           frame = 0;
         }
       }
