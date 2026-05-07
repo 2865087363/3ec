@@ -34,7 +34,7 @@ public class ClientStream {
   private static final boolean supportH265 = DecodecTools.isSupportH265();
   private static final boolean supportOpus = DecodecTools.isSupportOpus();
 
-  private static final int timeoutDelay = 1000 * 15;
+  private static final int timeoutDelay = 1000 * 30;
 
   public ClientStream(Device device, MyInterface.MyFunctionBoolean handle) {
     // 超时
@@ -98,11 +98,11 @@ public class ClientStream {
         try {
           if (!mainConn) {
             mainSocket = new Socket();
-            mainSocket.connect(inetSocketAddress, timeoutDelay / 2);
+            mainSocket.connect(inetSocketAddress, timeoutDelay );
             mainConn = true;
           }
           videoSocket = new Socket();
-          videoSocket.connect(inetSocketAddress, timeoutDelay / 2);
+          videoSocket.connect(inetSocketAddress, timeoutDelay );
           mainOutputStream = mainSocket.getOutputStream();
           mainDataInputStream = new DataInputStream(mainSocket.getInputStream());
           videoDataInputStream = new DataInputStream(videoSocket.getInputStream());
