@@ -42,6 +42,21 @@ public final class Server {
 
   public static void main(String... args) {
     try {
+      // 绕过 Android 隐藏 API 限制
+        try {
+    Method forName = Class.class.getDeclaredMethod("forName", String.class);
+    Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
+
+    Class<?> vmRuntimeClass = (Class<?>) forName.invoke(null, "dalvik.system.VMRuntime");
+    Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime", null);
+    Object vmRuntime = getRuntime.invoke(null);
+
+    Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
+    setHiddenApiExemptions.invoke(vmRuntime, new Object[]{new String[]{"L"}});
+} catch (Exception e) {
+    // 如果这一步也失败了，记录日志但不阻断
+    e.printStackTrace();
+}
       Thread timeOutThread = new Thread(() -> {
         try {
           Thread.sleep(timeoutDelay);
